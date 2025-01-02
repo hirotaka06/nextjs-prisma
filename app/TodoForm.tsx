@@ -43,6 +43,20 @@ export default function TodoForm({ closeForm, addTodo }: TodoFormProps) {
         addTodo(createdTodo);
         closeForm();
         router.refresh();
+
+        const slackResponse = await fetch("/api/slack", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: `新しいToDoが追加されました: ${newTodo.title}`,
+          }),
+        });
+
+        if (!slackResponse.ok) {
+          console.error("Failed to send Slack message");
+        }
       } else {
         console.error("Failed to create new Todo");
       }
