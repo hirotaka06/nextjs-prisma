@@ -27,7 +27,6 @@ export default function TodoForm({ closeForm, addTodo }: TodoFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      console.log("Sending request to /api/todos");
       const response = await fetch("/api/todos", {
         method: "POST",
         headers: {
@@ -39,35 +38,36 @@ export default function TodoForm({ closeForm, addTodo }: TodoFormProps) {
         }),
       });
 
-      console.log("Received response from /api/todos", response);
-
       if (response.ok) {
         const createdTodo = await response.json();
         addTodo(createdTodo);
         closeForm();
         router.refresh();
-        console.log("Sending request to /api/slack");
-        const slackResponse = await fetch("/api/slack", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
-          },
-          body: JSON.stringify({
-            text: `新しいToDoが追加されました: ${newTodo.title}`,
-          }),
-        });
-
-        console.log("Received response from /api/slack", slackResponse);
-
-        if (!slackResponse.ok) {
-          console.error("Failed to send Slack message", slackResponse.status);
-        }
+        await sendSlackNotification(`New Todo added: ${newTodo.title}`);
       } else {
-        console.error("Failed to create new Todo", response.status);
+        console.error("Failed to create new Todo");
       }
     } catch (error) {
       console.error("Error creating new Todo:", error);
+    }
+  };
+
+  const sendSlackNotification = async (message: string) => {
+    try {
+      const response = await fetch("/api/slack", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      const data = await response.json();
+      if (!data.success) {
+        console.error(`Slack notification error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error("Error sending Slack notification:", error);
     }
   };
 
