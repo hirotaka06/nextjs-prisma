@@ -49,6 +49,7 @@ export default function TodotableClient({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
           },
           body: JSON.stringify({ text: `ToDo ID: ${id} が削除されました。` }),
         });
@@ -85,6 +86,7 @@ export default function TodotableClient({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
           },
           body: JSON.stringify({ text: `ToDo ID: ${id} が更新されました。` }),
         });
