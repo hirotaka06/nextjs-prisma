@@ -5,7 +5,7 @@ export async function PUT(
   request: Request,
   { params }: { params: { id: string } }
 ) {
-  const { id } = await params;
+  const { id } = params;
   const { title, done } = await request.json();
 
   try {
