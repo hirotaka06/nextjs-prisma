@@ -3,9 +3,9 @@ import prisma from "@/lib/PrismaClient";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const { id } = params;
+  const { id } = context.params;
   const { title, done } = await request.json();
 
   try {
