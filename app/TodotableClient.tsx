@@ -105,7 +105,7 @@ export default function TodotableClient({
           }
         }
 
-        if (updatedTodo.done) {
+        if (originalTodo?.done !== updatedTodo.done && updatedTodo.done) {
           const slackResponse = await fetch("/api/slack", {
             method: "POST",
             headers: {
