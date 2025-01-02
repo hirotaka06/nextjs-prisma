@@ -47,6 +47,7 @@ export default function TodoForm({ closeForm, addTodo }: TodoFormProps) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
           },
           body: JSON.stringify({
             text: `新しいToDoが追加されました: ${newTodo.title}`,
