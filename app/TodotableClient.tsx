@@ -45,14 +45,7 @@ export default function TodotableClient({
       });
       if (response.ok) {
         setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-        await fetch("/api/slack", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
-          },
-          body: JSON.stringify({ text: `ToDo ID: ${id} が削除されました。` }),
-        });
+        await sendSlackNotification(`Todo deleted: ID ${id}`);
       } else {
         console.error("Failed to delete task");
       }
@@ -82,19 +75,31 @@ export default function TodotableClient({
             .sort((a, b) => a.id - b.id)
         );
         setEditingId(null);
-        await fetch("/api/slack", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
-          },
-          body: JSON.stringify({ text: `ToDo ID: ${id} が更新されました。` }),
-        });
+        await sendSlackNotification(`Todo updated: ${updatedTodo.title}`);
       } else {
         console.error("Failed to update task");
       }
     } catch (error) {
       console.error("Error updating task:", error);
+    }
+  };
+
+  const sendSlackNotification = async (message: string) => {
+    try {
+      const response = await fetch("/api/slack", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      const data = await response.json();
+      if (!data.success) {
+        console.error(`Slack notification error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error("Error sending Slack notification:", error);
     }
   };
 
