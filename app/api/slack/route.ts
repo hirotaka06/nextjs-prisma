@@ -11,10 +11,10 @@ async function sendSlackMessage(message: string) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${SLACK_TOKEN}`, // Bearerトークンを使用
+      Authorization: `Bearer ${SLACK_TOKEN}`,
     },
     body: JSON.stringify({
-      channel: SLACK_CHANNEL_ID, // チャンネルIDを使用
+      channel: SLACK_CHANNEL_ID,
       text: message,
     }),
   });
