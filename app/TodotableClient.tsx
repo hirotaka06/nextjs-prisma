@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, CirclePlus, X, Badge, BadgeCheck } from "lucide-react";
 import { Todo } from "@/app/types";
 import TodoForm from "./TodoForm";
-import { sendSlackMessage } from "@/lib/utils";
 
 interface TodotableClientProps {
   initialTodos: Todo[];
@@ -46,7 +45,13 @@ export default function TodotableClient({
       });
       if (response.ok) {
         setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-        await sendSlackMessage(`ToDo ID: ${id} が削除されました。`);
+        await fetch("/api/slack", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: `ToDo ID: ${id} が削除されました。` }),
+        });
       } else {
         console.error("Failed to delete task");
       }
@@ -76,7 +81,13 @@ export default function TodotableClient({
             .sort((a, b) => a.id - b.id)
         );
         setEditingId(null);
-        await sendSlackMessage(`ToDo ID: ${id} が更新されました。`);
+        await fetch("/api/slack", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: `ToDo ID: ${id} が更新されました。` }),
+        });
       } else {
         console.error("Failed to update task");
       }

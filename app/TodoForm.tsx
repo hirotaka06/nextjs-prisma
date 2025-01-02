@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Todo } from "./types";
-import { sendSlackMessage } from "@/lib/utils";
 
 interface TodoFormProps {
   closeForm: () => void;
@@ -44,7 +43,15 @@ export default function TodoForm({ closeForm, addTodo }: TodoFormProps) {
         addTodo(createdTodo);
         closeForm();
         router.refresh();
-        await sendSlackMessage(`新しいToDoが追加されました: ${newTodo.title}`);
+        await fetch("/api/slack", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: `新しいToDoが追加されました: ${newTodo.title}`,
+          }),
+        });
       } else {
         console.error("Failed to create new Todo");
       }
