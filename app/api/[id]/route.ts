@@ -25,9 +25,9 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: { id: string } }
 ) {
-  const id = params.id;
+  const { id } = context.params;
 
   try {
     await prisma.todo.delete({
