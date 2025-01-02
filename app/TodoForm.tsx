@@ -43,31 +43,11 @@ export default function TodoForm({ closeForm, addTodo }: TodoFormProps) {
         addTodo(createdTodo);
         closeForm();
         router.refresh();
-        await sendSlackNotification(`New Todo added: ${newTodo.title}`);
       } else {
         console.error("Failed to create new Todo");
       }
     } catch (error) {
       console.error("Error creating new Todo:", error);
-    }
-  };
-
-  const sendSlackNotification = async (message: string) => {
-    try {
-      const response = await fetch("/api/slack", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ message }),
-      });
-
-      const data = await response.json();
-      if (!data.success) {
-        console.error(`Slack notification error: ${data.error}`);
-      }
-    } catch (error) {
-      console.error("Error sending Slack notification:", error);
     }
   };
 
